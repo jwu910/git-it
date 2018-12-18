@@ -13,7 +13,8 @@
   "description": "Browse repositories by users. Quickly fork and clone.",
   "main": "index.js",
   "scripts": {
-    "build": "echo "Placeholder script",
+    "build": "echo \"Placeholder script\"",
+    "start": "node index.js",
     "test": "echo \"This is not the test you are looking for\""
   },
   "repository": {
