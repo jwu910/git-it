@@ -1,0 +1,26 @@
+{
+  "name": "git-started",
+  "version": "0.0.1",
+  "description": "Browse repositories by users. Quickly fork and clone.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"This is not the test you are looking for\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jwu910/git-started.git"
+  },
+  "keywords": [
+    "git",
+    "fork",
+    "project",
+    "repository",
+    "clone"
+  ],
+  "author": "Joshua Wu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jwu910/git-started/issues"
+  },
+  "homepage": "https://github.com/jwu910/git-started#readme"
+}
