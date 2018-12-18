@@ -1,4 +1,13 @@
 {
+
+  "bin": {
+    "gitstarted": "index.js"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "name": "git-started",
   "version": "0.0.1",
   "description": "Browse repositories by users. Quickly fork and clone.",
@@ -22,5 +31,13 @@
   "bugs": {
     "url": "https://github.com/jwu910/git-started/issues"
   },
-  "homepage": "https://github.com/jwu910/git-started#readme"
+  "homepage": "https://github.com/jwu910/git-started#readme",
+  "dependencies": {
+    "prompts": "^2.0.0",
+    "update-notifier": "^2.5.0"
+  },
+  "devDependencies": {
+    "chalk": "^2.4.1",
+    "gulp-babel": "^8.0.0"
+  }
 }
