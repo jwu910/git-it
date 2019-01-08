@@ -1,5 +1,4 @@
 {
-
   "bin": {
     "gitstarted": "index.js"
   },
@@ -13,7 +12,7 @@
   "description": "Browse repositories by users. Quickly fork and clone.",
   "main": "index.js",
   "scripts": {
-    "build": "echo \"Placeholder script\"",
+    "build": "gulp build",
     "start": "node index.js",
     "test": "echo \"This is not the test you are looking for\""
   },
@@ -35,11 +34,17 @@
   },
   "homepage": "https://github.com/jwu910/git-started#readme",
   "dependencies": {
-    "prompts": "^2.0.0",
+    "axios": "^0.18.0",
+    "commander": "^2.19.0",
+    "prompts": "^2.0.1",
     "update-notifier": "^2.5.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
     "chalk": "^2.4.1",
-    "gulp-babel": "^8.0.0"
+    "gulp": "^4.0.0",
+    "gulp-babel": "^8.0.0-beta.2"
   }
 }
