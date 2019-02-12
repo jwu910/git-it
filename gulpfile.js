@@ -1,8 +1,24 @@
-var gulp = require("gulp");
-var babel = require("gulp-babel");
+const babel = require('gulp-babel');
+const chalk = require('chalk');
+const gulp = require('gulp');
 
-gulp.task("build", function () {
-  return gulp.src("src/app.js")
+const build = gulp.task('build', () => {
+  return gulp
+    .src('src/**/*.js')
     .pipe(babel())
-    .pipe(gulp.dest("dist"));
+    .on('error', error => {
+      process.stderr.write(chalk.red.bold('Build failed.') + '\n');
+      process.stderr.write(error.fileName + '\n');
+      process.stderr.write(error.stack + '\n');
+
+      this.emit('end');
+    })
+    .pipe(gulp.dest('dist'));
 });
+
+const watch = gulp.task('watch', () => {
+  gulp.watch(['src/**/*.js'], gulp.task('build'));
+});
+
+exports.build = build;
+exports.watch = watch;
