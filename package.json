@@ -14,7 +14,8 @@
   "scripts": {
     "build": "gulp build",
     "start": "node index.js",
-    "test": "echo \"This is not the test you are looking for\""
+    "test": "echo \"This is not the test you are looking for\"",
+    "watch": "gulp watch"
   },
   "repository": {
     "type": "git",
@@ -45,6 +46,6 @@
     "@babel/preset-env": "^7.2.3",
     "chalk": "^2.4.1",
     "gulp": "^4.0.0",
-    "gulp-babel": "^8.0.0-beta.2"
+    "gulp-babel": "^8.0.0"
   }
 }
