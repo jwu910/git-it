@@ -37,6 +37,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "commander": "^2.19.0",
+    "dotenv": "^6.2.0",
+    "graphql-request": "^1.8.2",
     "prompts": "^2.0.3",
     "update-notifier": "^2.5.0"
   },

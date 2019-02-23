@@ -1,8 +1,9 @@
-const axios = require('axios');
-const prompts = require('prompts');
-const program = require('commander');
-const updateNotifier = require('update-notifier');
-const path = require('path');
+import path from 'path';
+import program from 'commander';
+import prompts from 'prompts';
+import updateNotifier from 'update-notifier';
+
+import { getRepos } from './api/getRepos';
 
 const pkg = require(path.resolve(__dirname, '../package.json'));
 const notifier = updateNotifier({ pkg });
@@ -11,33 +12,28 @@ if (notifier.update) {
   notifier.notify();
 }
 
-export const start = args => {
+export const start = async args => {
   program
     .version(pkg.version, '-v, --version')
     .option('-u, --user <username>', 'Query User')
     .parse(process.argv);
 
-  const username = program.user
+  const username = program.user;
 
-  const options = {
-    method: 'GET',
-    baseURL: 'https://api.github.com',
-    url: `/users/${String(username)}/repos`,
-    headers: {
-      'Accept': 'application/json',
-      'User-Agent': `${username}`
-    }
+  try {
+    const response = await getRepos(username);
+
+    const repositories = response.user.repositories.edges;
+
+    const reposList = repositories.map(({ node }) => {
+      return {
+        forks: node.forks.totalCount,
+        id: node.id,
+        name: node.name,
+        stars: node.stargazers.totalCount,
+      };
+    });
+  } catch (error) {
+    console.log('error : ', error);
   }
-
-  let reposList = [];
-
-  axios(options).then(
-    results => {
-      console.log(results.data);
-    }
-  ).catch(
-    error => {
-      console.error('Error : ', error);
-    }
-  );
-}
+};
