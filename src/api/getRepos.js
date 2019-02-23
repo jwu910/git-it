@@ -6,7 +6,7 @@ export const getRepos = async username => {
       `{
         user(login: "${username}") {
           name
-          repositories(first: 100 orderBy:{field: STARGAZERS, direction: DESC}) {
+          repositories(first:100 orderBy:{field: STARGAZERS, direction: DESC}) {
             edges {
               node {
                 id
