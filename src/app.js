@@ -20,20 +20,33 @@ export const start = async args => {
 
   const username = program.user;
 
+  let reposList;
+
   try {
     const response = await getRepos(username);
 
     const repositories = response.user.repositories.edges;
 
-    const reposList = repositories.map(({ node }) => {
+    reposList = repositories.map(({ node }) => {
+      const { forks, id, name, stargazers } = node;
+
       return {
-        forks: node.forks.totalCount,
-        id: node.id,
-        name: node.name,
-        stars: node.stargazers.totalCount,
+        title: `${name} - ${stargazers.totalCount} stars - ${
+          forks.totalCount
+        } forks`,
+        value: id,
       };
     });
   } catch (error) {
     console.log('error : ', error);
   }
+
+  let choice = await prompts({
+    type: 'autocomplete',
+    name: `id`,
+    message: `Pick one of ${username}'s repository to fork`,
+    choices: [...reposList],
+  });
+
+  console.log('CHOICE : ', choice);
 };
