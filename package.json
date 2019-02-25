@@ -16,8 +16,7 @@
   "main": "index.js",
   "scripts": {
     "build": "gulp build",
-    "commit": "commit",
-    "cz": "git-cz",
+    "commit": "git-cz",
     "format": "prettier --write \"**/*.js\"",
     "lint:fix": "eslint --config .eslintrc.json ./ --fix",
     "lint": "eslint --config .eslintrc.json ./",
