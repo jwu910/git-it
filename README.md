@@ -41,6 +41,11 @@ Options:
   - Check out [good first issue](https://github.com/jwu910/git-started/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22+) or [up-for-grabs](https://github.com/jwu910/git-started/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22up-for-grabs%22+) labels
 - Follow [Contributing guidelines](https://github.com/jwu910/git-started/blob/master/CONTRIBUTING.md) to submit pull requests
 
+## Bug reports
+
+Please submit bug reports on our [issues page](https://github.com/jwu910/git-started/issues)
+Be clear, be concise. If you have a solution, feel free to send a PR and reference the existing issue. See [Contributing guidelines](https://github.com/jwu910/git-started/blob/master/CONTRIBUTING.md) for more information
+
 ## License
 
 [MIT](https://github.com/jwu910/git-started/blob/master/LICENSE)
