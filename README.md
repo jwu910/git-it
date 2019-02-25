@@ -28,10 +28,11 @@ git-started --user <github username> [...options]
 ```
 
 Options:
-|Flag|Type|Description|
-|---|---|---|
-|-u, --user|String|Github username to query repositories|
-|-s, --ssh|Null|If true, use ssh url to clone, if false, use https url to clone|
+
+|    Flag    |  Type  | Description                                                     |
+| :--------: | :----: | :-------------------------------------------------------------- |
+| -u, --user | String | Github username to query repositories                           |
+| -s, --ssh  |  Null  | If true, use ssh url to clone, if false, use https url to clone |
 
 ## Contributing
 
