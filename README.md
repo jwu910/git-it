@@ -1,12 +1,18 @@
 # Git Started
+
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+
 <hr />
 The quick and easy tool to fork and clone a repository to get you started quickly.
 
 ## Installation
+
 ```
 npm install --global git-started
 ```
+
 or
+
 ```
 npm i -g git-started
 ```
@@ -16,6 +22,7 @@ Set up [personal access token](https://github.com/settings/tokens/new) with righ
 Set up an environment variable named `GITHUB_TOKEN` where your personall access token will reside.
 
 ## Usage
+
 ```
 git-started --user <github username> [...options]
 ```
@@ -26,7 +33,6 @@ Options:
 |-u, --user|String|Github username to query repositories|
 |-s, --ssh|Null|If true, use ssh url to clone, if false, use https url to clone|
 
-
 ## Contributing
 
 - Fork and clone
@@ -35,4 +41,5 @@ Options:
 - Follow [Contributing guidelines](https://github.com/jwu910/git-started/blob/master/CONTRIBUTING.md) to submit pull requests
 
 ## License
+
 [MIT](https://github.com/jwu910/git-started/blob/master/LICENSE)
