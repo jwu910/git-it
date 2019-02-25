@@ -11,6 +11,7 @@ export const getRepos = async username => {
               node {
                 id
                 name
+                description
                 forks {
                   totalCount
                 }
