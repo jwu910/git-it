@@ -59,62 +59,56 @@ export const start = async () => {
 
   // Prompt for username if none provided
   if (!username) {
-    process.stderr.write.error(
+    process.stderr.write(
       `Use option -u or --user to search repositories by Github use
-          \nUsage: git-started -u jwu910`.trim(),
+      \nUsage: git-started -u jwu910`.trim(),
     );
 
     return;
   }
 
-  getRepos(username)
-    .catch(function() {
-      // Need special error handling because
-      // the GitHub API returns an ugly error message.
-      process.stderr.write(`Could not get user ${username}.`);
-      process.exit(1);
-    })
-    .then(function(response) {
-      // Check user & repo, then get list from graphQL edges
-      const user = response.user;
-      if (!user) {
-        return new Error('user not found.');
-      }
+  try {
+    var userGraph = await getRepos(username);
+  } catch (err) {
+    // This error message from the GitHub API is especially ugly.
+    process.stderr.write(`Error: could not get user ${username}.\n`);
+    process.exit(1);
+  }
 
-      const edges = user.repositories.edges;
-      if (!edges.length) {
-        return new Error('no repositories found.');
-      }
+  try {
+    // Check user & repo
+    const user = userGraph.user;
+    if (!user) {
+      throw new Error('user not found.');
+    }
 
-      return Promise.resolve(reposListFromGraphEdges(edges, username));
-    })
-    .then((
-      reposList, // Prompt user to choose a repo
-    ) =>
-      prompts({
-        type: 'autocomplete',
-        name: `repository`,
-        message: `Select ${username}'s repository to fork or start typing to search`,
-        choices: [...reposList],
-      }),
-    )
-    .then(function(chosenRepo) {
-      // Check that the chosen repo exists
-      if (!chosenRepo.repository) {
-        process.stdout.write('Repository not found.');
-        process.exit(0);
-      }
+    const edges = user.repositories.edges;
+    if (!edges.length) {
+      throw new Error('no repositories found.');
+    }
 
-      return Promise.resolve(chosenRepo);
-    })
-    .then(selection => forkRepo(selection)) // Fork the repo
-    .then(function(fork) {
-      // Clone the repo, either by SSH or HTTP
-      return cloneRepo(program.ssh ? fork.data.ssh_url : fork.data.clone_url);
-    })
-    .then(() => process.stdout.write('Done.\n')) // Print out confirmation message
-    .catch(function(err) {
-      // Catch-and-print general error case
-      process.stderr.write(`Error: ${err.message}`);
+    // Get list from graphQL edges
+    const reposList = reposListFromGraphEdges(edges, username);
+
+    // Prompt user to choose a repo
+    const chosenRepo = await prompts({
+      type: 'autocomplete',
+      name: `repository`,
+      message: `Select ${username}'s repository to fork or start typing to search`,
+      choices: [...reposList],
     });
+
+    // Check that the repo chosen by prompt exists
+    if (!chosenRepo.repository) {
+      throw new Error('repository not found.');
+    }
+
+    const fork = await forkRepo(chosenRepo);
+    await cloneRepo(program.ssh ? fork.data.ssh_url : fork.data.clone_url);
+    process.stdout.write(`Successfully forked and cloned repo.\n`);
+  } catch (err) {
+    // Catch-and-print general error case
+    process.stderr.write(`Error: ${err.message}\n`);
+    process.exit(1);
+  }
 };

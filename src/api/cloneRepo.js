@@ -28,7 +28,7 @@ const execGit = args => {
       } else if (signal === 'SIGTERM') {
         reject(signal);
       } else {
-        reject('Error cloning repo: ' + errorString.toString());
+        reject(errorString.toString());
       }
     });
   });
@@ -38,5 +38,9 @@ export const cloneRepo = url => {
   const args = ['clone', url, '-v'];
 
   process.stdout.write('Cloning repo...\n');
-  return execGit(args);
+  return execGit(args)
+    .then(data => data)
+    .catch(function(errmsg) {
+      throw new Error(errmsg);
+    });
 };
