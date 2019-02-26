@@ -22,6 +22,6 @@ export const getRepos = async username => {
       }
     }`;
 
-  process.stdout.write('Getting repos list...');
+  process.stdout.write('Getting repos list...\n');
   return client.request(query);
 };

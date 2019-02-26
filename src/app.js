@@ -18,8 +18,9 @@ if (notifier.update) {
   notifier.notify();
 }
 
-function reposListFromRepos(repos, username) {
-  return repos.map(({ node }) => {
+// Extracts repository info from GraphQL edge nodes
+function reposListFromGraphEdges(edges, username) {
+  return edges.map(({ node }) => {
     const { id, name, stargazers } = node;
 
     let { description } = node;
@@ -67,20 +68,29 @@ export const start = async () => {
   }
 
   getRepos(username)
+    .catch(function() {
+      // Need special error handling because
+      // the GitHub API returns an ugly error message.
+      process.stderr.write(`Could not get user ${username}.`);
+      process.exit(1);
+    })
     .then(function(response) {
+      // Check user & repo, then get list from graphQL edges
       const user = response.user;
       if (!user) {
         return new Error('user not found.');
       }
 
-      const repositories = user.repositories.edges;
-      if (!repositories.length) {
+      const edges = user.repositories.edges;
+      if (!edges.length) {
         return new Error('no repositories found.');
       }
 
-      return Promise.resolve(reposListFromRepos(repositories, username));
+      return Promise.resolve(reposListFromGraphEdges(edges, username));
     })
-    .then(reposList =>
+    .then((
+      reposList, // Prompt user to choose a repo
+    ) =>
       prompts({
         type: 'autocomplete',
         name: `repository`,
@@ -89,6 +99,7 @@ export const start = async () => {
       }),
     )
     .then(function(chosenRepo) {
+      // Check that the chosen repo exists
       if (!chosenRepo.repository) {
         process.stdout.write('Repository not found.');
         process.exit(0);
@@ -96,14 +107,14 @@ export const start = async () => {
 
       return Promise.resolve(chosenRepo);
     })
-    .then(selection => forkRepo(selection))
+    .then(selection => forkRepo(selection)) // Fork the repo
     .then(function(fork) {
-      const cloneUrl = program.ssh ? fork.data.ssh_url : fork.data.clone_url;
-      return cloneRepo(cloneUrl);
+      // Clone the repo, either by SSH or HTTP
+      return cloneRepo(program.ssh ? fork.data.ssh_url : fork.data.clone_url);
     })
-    .then(() => process.stdout.write('Done.'))
+    .then(() => process.stdout.write('Done.\n')) // Print out confirmation message
     .catch(function(err) {
-      console.log(err);
+      // Catch-and-print general error case
       process.stderr.write(`Error: ${err.message}`);
     });
 };

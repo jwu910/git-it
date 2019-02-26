@@ -15,6 +15,6 @@ export const forkRepo = async ({ repository: { owner, repo } }) => {
     url: baseUrl + endpoint,
   };
 
-  process.stdout.write('Forking repo...');
+  process.stdout.write('Forking repo...\n');
   return axios(options);
 };
