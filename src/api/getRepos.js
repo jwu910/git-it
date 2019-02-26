@@ -1,32 +1,27 @@
 import client from './client';
 
 export const getRepos = async username => {
-  try {
-    const res = await client.request(
-      `{
-        user(login: "${username}") {
-          name
-          repositories(first:100 orderBy:{field: STARGAZERS, direction: DESC}) {
-            edges {
-              node {
-                id
-                name
-                description
-                forks {
-                  totalCount
-                }
-                stargazers {
-                  totalCount
-                }
+  const query = `{
+      user(login: "${username}") {
+        name
+        repositories(first:100 orderBy:{field: STARGAZERS, direction: DESC}) {
+          edges {
+            node {
+              id
+              name
+              description
+              forks {
+                totalCount
+              }
+              stargazers {
+                totalCount
               }
             }
           }
         }
-      }`,
-    );
+      }
+    }`;
 
-    return res;
-  } catch (error) {
-    return 'Error: ', error;
-  }
+  process.stdout.write('Getting repos list...');
+  return client.request(query);
 };
