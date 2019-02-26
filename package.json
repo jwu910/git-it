@@ -11,7 +11,7 @@
     "README.md"
   ],
   "name": "git-started",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Browse repositories by users. Quickly fork and clone.",
   "main": "index.js",
   "scripts": {
