@@ -44,22 +44,6 @@ function reposListFromGraphEdges(edges, username) {
   });
 }
 
-async function getReposList(username) {
-  try {
-    const userGraph = await getRepos(username);
-    return reposListFromGraphEdges(userGraph.user.repositories.edges, username);
-  } catch (response) {
-    for (let i in response.response.errors) {
-      process.stderr.write(
-        `ERR_${response.response.errors[i].type}: ${
-          response.response.errors[i].message
-        }\n`,
-      );
-    }
-    process.exit(1);
-  }
-}
-
 export const start = async () => {
   program
     .version(pkg.version, '-v, --version')
@@ -79,7 +63,11 @@ export const start = async () => {
   }
 
   try {
-    const reposList = await getReposList(username);
+    const userGraph = await getRepos(username);
+    const reposList = reposListFromGraphEdges(
+      userGraph.user.repositories.edges,
+      username,
+    );
 
     const chosenRepo = await prompts({
       type: 'autocomplete',
@@ -96,7 +84,7 @@ export const start = async () => {
     await cloneRepo(program.ssh ? fork.data.ssh_url : fork.data.clone_url);
     process.stdout.write(`Successfully forked and cloned repo.\n`);
   } catch (err) {
-    process.stderr.write(`ERROR: ${err.message}\n`);
+    process.stderr.write(`${err}\n`);
     process.exit(1);
   }
 };
