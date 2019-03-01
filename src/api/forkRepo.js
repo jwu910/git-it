@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import auth from '../auth';
 
-export const forkRepo = async ({ repository: { owner, repo } }) => {
+export const forkRepo = ({ repository: { owner, repo } }) => {
   const baseUrl = `https://api.github.com`;
   const endpoint = `/repos/${owner}/${repo}/forks`;
 

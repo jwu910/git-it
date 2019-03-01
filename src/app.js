@@ -7,18 +7,14 @@ import { cloneRepo } from './api/cloneRepo';
 import { forkRepo } from './api/forkRepo';
 import { getRepos } from './api/getRepos';
 import { truncate } from './util/truncate';
-import { exists } from 'fs';
 
 const pkg = require(path.resolve(__dirname, '../package.json'));
-const notifier = updateNotifier({
-  pkg,
-});
+const notifier = updateNotifier({ pkg });
 
 if (notifier.update) {
   notifier.notify();
 }
 
-// Extracts repository info from GraphQL edge nodes
 function reposListFromGraphEdges(edges, username) {
   return edges.map(({ node }) => {
     const { id, name, stargazers } = node;
@@ -48,6 +44,22 @@ function reposListFromGraphEdges(edges, username) {
   });
 }
 
+async function getReposList(username) {
+  try {
+    const userGraph = await getRepos(username);
+    return reposListFromGraphEdges(userGraph.user.repositories.edges, username);
+  } catch (response) {
+    for (let i in response.response.errors) {
+      process.stderr.write(
+        `ERR_${response.response.errors[i].type}: ${
+          response.response.errors[i].message
+        }\n`,
+      );
+    }
+    process.exit(1);
+  }
+}
+
 export const start = async () => {
   program
     .version(pkg.version, '-v, --version')
@@ -57,10 +69,9 @@ export const start = async () => {
 
   const username = program.user;
 
-  // Prompt for username if none provided
   if (!username) {
     process.stderr.write(
-      `Use option -u or --user to search repositories by Github use
+      `Use option -u or --user to search repositories by Github user
       \nUsage: git-started -u jwu910`.trim(),
     );
 
@@ -68,29 +79,8 @@ export const start = async () => {
   }
 
   try {
-    var userGraph = await getRepos(username);
-  } catch (err) {
-    // This error message from the GitHub API is especially ugly.
-    process.stderr.write(`Error: could not get user ${username}.\n`);
-    process.exit(1);
-  }
+    const reposList = await getReposList(username);
 
-  try {
-    // Check user & repo
-    const user = userGraph.user;
-    if (!user) {
-      throw new Error('user not found.');
-    }
-
-    const edges = user.repositories.edges;
-    if (!edges.length) {
-      throw new Error('no repositories found.');
-    }
-
-    // Get list from graphQL edges
-    const reposList = reposListFromGraphEdges(edges, username);
-
-    // Prompt user to choose a repo
     const chosenRepo = await prompts({
       type: 'autocomplete',
       name: `repository`,
@@ -98,7 +88,6 @@ export const start = async () => {
       choices: [...reposList],
     });
 
-    // Check that the repo chosen by prompt exists
     if (!chosenRepo.repository) {
       throw new Error('repository not found.');
     }
@@ -107,8 +96,7 @@ export const start = async () => {
     await cloneRepo(program.ssh ? fork.data.ssh_url : fork.data.clone_url);
     process.stdout.write(`Successfully forked and cloned repo.\n`);
   } catch (err) {
-    // Catch-and-print general error case
-    process.stderr.write(`Error: ${err.message}\n`);
+    process.stderr.write(`ERROR: ${err.message}\n`);
     process.exit(1);
   }
 };

@@ -38,9 +38,5 @@ export const cloneRepo = url => {
   const args = ['clone', url, '-v'];
 
   process.stdout.write('Cloning repo...\n');
-  return execGit(args)
-    .then(data => data)
-    .catch(function(errmsg) {
-      throw new Error(errmsg);
-    });
+  return execGit(args);
 };
