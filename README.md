@@ -39,6 +39,7 @@ Options:
 - Fork and clone
 - Find an [issue](https://github.com/jwu910/git-started/issues)
   - Check out [good first issue](https://github.com/jwu910/git-started/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22+) or [up-for-grabs](https://github.com/jwu910/git-started/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22up-for-grabs%22+) labels
+- Use `npm run commit` to start the Commitizen prompt to commit your staged changes.
 - Follow [Contributing guidelines](https://github.com/jwu910/git-started/blob/master/CONTRIBUTING.md) to submit pull requests
 
 ## Bug reports
