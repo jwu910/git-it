@@ -24,7 +24,7 @@ export const getRepos = async username => {
 
   try {
     return await client.request(query);
-  } catch (e) {
-    throw new Error(e.response.errors[0].message);
+  } catch (error) {
+    throw new Error(error.response.errors[0].message);
   }
 };

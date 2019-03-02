@@ -36,5 +36,6 @@ const execGit = args => {
 
 export const cloneRepo = url => {
   const args = ['clone', url, '-v'];
+
   return execGit(args);
 };
