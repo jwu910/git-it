@@ -22,9 +22,5 @@ export const getRepos = async username => {
     }
   }`;
 
-  try {
-    return await client.request(query);
-  } catch (error) {
-    throw new Error(error.response.errors[0].message);
-  }
+  return await client.request(query);
 };
