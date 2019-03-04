@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import path from 'path';
 import program from 'commander';
 import prompts from 'prompts';
@@ -16,7 +15,7 @@ if (notifier.update) {
   notifier.notify();
 }
 
-export const start = async args => {
+export const start = async () => {
   program
     .version(pkg.version, '-v, --version')
     .option('-u, --user <username>', 'Query User')
@@ -25,74 +24,92 @@ export const start = async args => {
 
   const username = program.user;
 
-  let reposList;
-
   //TODO: prompt for username if none provided
   if (!username) {
     console.error(
-      `Use option -u or --user to search repositories by Github use
+      `Use option -u or --user to search repositories by Github user
       \nUsage: git-started -u jwu910`.trim(),
     );
 
     return;
   }
 
+  let userGraph;
   try {
-    const response = await getRepos(username);
-
-    const repositories = response.user.repositories.edges;
-
-    if (!repositories.length) {
-      throw new Error('No repositories found.');
-    }
-
-    reposList = repositories.map(({ node }) => {
-      const { id, name, stargazers } = node;
-
-      let { description } = node;
-
-      const termWidth = process.stdout.columns;
-
-      if (description === null) {
-        description = 'No Description';
-      }
-
-      const limit = termWidth - name.length;
-
-      return {
-        title: `${name} - ${stargazers.totalCount} stars - ${truncate(
-          description,
-          limit - 20,
-          '...',
-        )}`,
-        value: {
-          id,
-          repo: name,
-          owner: username,
-        },
-      };
-    });
-
-    let selection = await prompts({
-      type: 'autocomplete',
-      name: `repository`,
-      message: `Select ${username}'s repository to fork or start typing to search`,
-      choices: [...reposList],
-    });
-
-    const fork = await forkRepo(selection);
-
-    process.stdout.write(`Cloning into ${cloneUrl}`);
-
-    const cloneUrl = program.ssh ? fork.data.ssh_url : fork.data.clone_url;
-
-    await cloneRepo(cloneUrl);
+    userGraph = await getRepos(username);
   } catch (error) {
-    process.stderr.write(
-      'Unable to fork repository, check params and try again \n',
-      error,
+    console.error('Error getting repositories.');
+    error.response.errors.forEach(err =>
+      console.error(`ERR_${err.type}: ${err.message}`),
     );
 
-    process.exit(1);
+    return;
+  }
+
+  const reposList = userGraph.user.repositories.edges.map(({ node }) => {
+    const { id, name, stargazers } = node;
+
+    let { description } = node;
+
+    const termWidth = process.stdout.columns;
+
+    if (description === null) {
+      description = 'No Description';
+    }
+
+    const limit = termWidth - name.length;
+
+    return {
+      title: `${name} - ${stargazers.totalCount} stars - ${truncate(
+        description,
+        limit - 20,
+        '...',
+      )}`,
+      value: {
+        id,
+        repo: name,
+        owner: username,
+      },
+    };
+  });
+
+  const selection = await prompts({
+    type: 'autocomplete',
+    name: 'repository',
+    message: `Select ${username}'s repository to fork or start typing to search`,
+    choices: [...reposList],
+  });
+
+  if (!selection.repository) {
+    console.error('Error: Repository not found.');
+
+    return;
+  }
+
+  const selectionRepo = `${selection.repository.owner}/${
+    selection.repository.repo
+  }`;
+
+  let fork;
+  try {
+    fork = await forkRepo(selection);
+
+    console.log(`Successfully forked ${selectionRepo}.`);
+  } catch (error) {
+    console.error(`Error forking ${selectionRepo}.`);
+    console.error(`Message: ${error}`);
+
+    return;
+  }
+
+  try {
+    await cloneRepo(program.ssh ? fork.data.ssh_url : fork.data.clone_url);
+
+    console.log(`Successfully cloned ${selectionRepo}.`);
+  } catch (error) {
+    console.error(`Error cloning ${selectionRepo}.`);
+    console.error(`Message: ${error}`);
+
+    return;
   }
 };
