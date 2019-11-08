@@ -6,7 +6,7 @@ update_configs:
       - "security"
       - "dependencies"
     target_branch: "development"
-    update_schedule: "live"
+    update_schedule: "monthly"
     default_assignees:
       - "@jwu910"
     default_reviewers:
@@ -17,4 +17,4 @@ update_configs:
     automerged_updates:
       - match:
           dependency_type: "all"
-          update_type: "security:patch"
+          update_type: "semver:minor"
